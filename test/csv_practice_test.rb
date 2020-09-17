@@ -92,7 +92,7 @@ describe "CSV and Enumerables Exercise" do
     end
   end
 
-  xdescribe 'get_all_gold_medalists' do
+  describe 'get_all_gold_medalists' do
     
     it 'returns an array of gold medalists' do
       # Arrange
@@ -121,4 +121,68 @@ describe "CSV and Enumerables Exercise" do
     end
   end
 
+  # added test for team_with_most_medals
+  describe 'team_with_most_medals' do
+    it 'returns the correct data type (hash) with correct key-value pairs' do
+      # Arrange
+      data = total_medals_per_team(get_all_olympic_athletes(OLYMPIC_DATA_FILENAME))
+      # Act
+      most_medals = team_with_most_medals(data)
+      # Assert
+      expect(most_medals).must_be_instance_of Hash
+      expect([most_medals['Team'],most_medals['Count']]).must_equal ['United States', 944]
+      expect(most_medals.length).must_equal 2
+    end
+  end
+
+  # adjusted get_all_olympic_athletes test for athlete_height_in_inches
+  describe 'athlete_height_in_inches' do
+    it 'returns an array of Olympic athletes hashes with the correct information but height is in inches' do
+      # Arrange:
+      data = get_all_olympic_athletes(OLYMPIC_DATA_FILENAME)
+      # Act
+      olympic_athletes_in = athlete_height_in_inches(data)
+
+      # Assert:
+      # Check that we get back an array
+      expect(olympic_athletes_in).must_be_instance_of Array
+
+      olympic_athletes_in.each do |athlete|
+        # Check that each element in the array is a hash
+        expect(athlete).must_be_instance_of Hash
+
+        # Check that each Olympian hash has the necessary keys
+        #   (defined in the constant REQUIRED_OLYMPIAN_FIELDS above)
+        expect(athlete.keys.length).must_equal REQUIRED_OLYMPIAN_FIELDS.length
+        REQUIRED_OLYMPIAN_FIELDS.each do |required_field|
+          expect(athlete.keys).must_include required_field
+        end
+      end
+    end
+
+    it 'has the proper number of rows' do
+      # Arrange:
+      data = get_all_olympic_athletes(OLYMPIC_DATA_FILENAME)
+      # Act
+      olympic_athletes_in = athlete_height_in_inches(data)
+
+      # Assert
+      expect(olympic_athletes_in.length).must_equal 49503
+    end
+
+    it 'has the right 1st and last row with height converted to inches' do
+      # Arrange & Act
+      data = get_all_olympic_athletes(OLYMPIC_DATA_FILENAME)
+      # Act
+      olympic_athletes_in = athlete_height_in_inches(data)
+
+      # Assert
+      expect(olympic_athletes_in.first['ID']).must_equal '21'
+      expect(olympic_athletes_in.first['Name']).must_equal 'Ragnhild Margrethe Aamodt'
+      expect(olympic_athletes_in.first['Height']).must_equal '64'
+      expect(olympic_athletes_in.last['ID']).must_equal '135568'
+      expect(olympic_athletes_in.last['Name']).must_equal 'Olga Igorevna Zyuzkova'
+      expect(olympic_athletes_in.last['Height']).must_equal '67'
+    end
+  end
 end
